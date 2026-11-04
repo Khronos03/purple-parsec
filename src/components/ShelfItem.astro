@@ -1,0 +1,205 @@
+---
+/**
+ * Un producto parado en el mesón, con su etiqueta colgando del borde.
+ * - 'shelf' (catálogo): todos los arcos del mismo tamaño (4:5).
+ * - 'hero': arco con la proporción real del producto (alto × ancho en cm, escala --cm).
+ */
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { formatCOP, lowestPrice, pricesVary, type Product, type Photo } from '../data/products';
+import { waLink, productMessage } from '../lib/whatsapp';
+
+interface Props {
+  product: Product;
+  /** 'hero': etiqueta mínima con la altura. 'shelf': etiqueta completa. */
+  variant?: 'shelf' | 'hero';
+  eager?: boolean;
+  /** Oculta en móvil (para el mesón del hero). */
+  hideSm?: boolean;
+  /** Foto alternativa (el hero usa recortes ajustados al matero). */
+  photo?: Photo;
+}
+const { product, variant = 'shelf', eager = false, hideSm = false, photo = product.photos[0] } = Astro.props;
+const size = product.size;
+const low = lowestPrice(product);
+const href = `/catalogo/${product.slug}/`;
+
+const hero = variant === 'hero';
+const style = hero && size ? `--h:${size.h};--w:${size.w}` : undefined;
+const imgWidth = hero && size ? Math.round(size.w * 4.2 * 2) : 600;
+const imgSizes = hero
+  ? size ? `${Math.round(size.w * 4.2)}px` : '160px'
+  : '(min-width: 70rem) 240px, (min-width: 48rem) 30vw, 45vw';
+---
+
+<li class:list={['slot', `slot--${variant}`, { 'slot--wall': hero && !size, 'slot--box': hero && size && size.w > size.h * 1.4, 'hide-sm': hideSm }]} style={style}>
+  <a class="slot__stage" href={href} tabindex="-1" aria-hidden="true">
+    <div class="arch slot__photo" style={variant === 'shelf' ? `view-transition-name: foto-${product.slug}` : undefined}>
+      <Image
+        src={photo.src}
+        alt={photo.alt}
+        widths={[Math.min(200, photo.src.width), Math.min(imgWidth, photo.src.width)]}
+        sizes={imgSizes}
+        loading={eager ? 'eager' : 'lazy'}
+        quality={82}
+      />
+    </div>
+  </a>
+  <div class="bench" aria-hidden="true"></div>
+  <div class="slot__hang">
+    <div class="string" aria-hidden="true"></div>
+    <div class="tag slot__tag">
+      {variant === 'hero' ? (
+        <a class="slot__link" href={href}>
+          <span class="tag__size">{size ? `${size.h} cm` : 'Ver'}</span>
+          <span class="tag__name tag__name--hero">{product.name.replace(/^Materos? /, '').replace(/ \d+ cm$/, '')}</span>
+        </a>
+      ) : (
+        <>
+          <a class="slot__link tag__name" href={href}>{product.name}</a>
+          <p class="tag__dims">{product.dimensions ?? 'Medidas a consultar'}</p>
+          <div class="tag__foot">
+            <p class="tag__price">
+              <span>{!product.onRequest && pricesVary(product) ? 'Desde' : 'Precio'}</span>
+              {product.onRequest ? 'A consultar' : formatCOP(low!)}
+            </p>
+            <a
+              class="tag__wa"
+              href={waLink(productMessage(product))}
+              target="_blank"
+              rel="noopener"
+              aria-label={`Pedir ${product.name} por WhatsApp`}
+            >
+              <Icon name="whatsapp" />
+            </a>
+          </div>
+        </>
+      )}
+    </div>
+  </div>
+</li>
+
+<style>
+  .slot {
+    position: relative;
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 3;
+    min-width: 0;
+  }
+  .slot--hero { display: flex; flex-direction: column; grid-row: auto; }
+
+  /* El tramo de mesón se prolonga hasta el final de la fila: filas cortas siguen sobre un mesón completo. */
+  .slot--shelf > .bench { position: relative; }
+  .slot--shelf > .bench::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 200vw;
+    top: -0.35rem;
+    bottom: 0;
+    background: inherit;
+    border-top: 0.35rem solid var(--bench-top);
+    box-shadow: inherit;
+    z-index: -1;
+  }
+  .slot__stage {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-inline: 0.5rem;
+  }
+  .slot__photo {
+    width: calc(var(--w) * var(--cm));
+    height: calc(var(--h) * var(--cm));
+    max-width: 100%;
+    transition: transform 0.6s var(--ease-out);
+  }
+  .slot__photo :global(img) { object-position: 50% 62%; }
+  /* Catálogo: todas las fotos iguales, arco 4:5. */
+  .slot--shelf .slot__stage { padding-inline: 0.4rem; }
+  .slot--shelf .slot__photo { width: 100%; height: auto; aspect-ratio: 4 / 5; }
+  .slot--shelf .slot__photo :global(img) { object-position: 50% 55%; }
+  .slot--hero .slot__photo :global(img) { object-position: 50% 100%; }
+  /* Jardineras: caja, arco rebajado. */
+  .slot--box .slot__photo { border-radius: 2.25rem 2.25rem 0 0; }
+  .slot--box .slot__photo :global(img) { object-position: 50% 52%; }
+  /* Piezas de pared sin medida publicada: no se dibujan a escala. */
+  .slot--wall .slot__stage { align-items: flex-start; padding-bottom: 1.5rem; }
+  .slot--wall .slot__photo { width: 8.5rem; height: 8.5rem; border-radius: 50%; }
+
+  .slot__hang {
+    padding-inline: 0.4rem;
+    padding-bottom: 2.75rem;
+    transform-origin: 50% 0;
+    transition: transform 0.8s var(--ease-out);
+  }
+  .slot:hover .slot__hang,
+  .slot:focus-within .slot__hang { transform: rotate(-2.5deg); }
+
+  .slot__link { text-decoration: none; }
+  /* La etiqueta entera lleva a la ficha; la foto también (enlace duplicado fuera del orden de tabulación). */
+  .slot__tag:has(.slot__link) { cursor: pointer; }
+  .slot__link::after { content: ''; position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
+  .slot__link:focus-visible { outline: none; }
+  .slot:has(.slot__link:focus-visible) .slot__tag { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+  .tag__name {
+    display: block;
+    font: 600 1.02rem/1.15 var(--font-display);
+    color: var(--green-deep);
+    text-wrap: balance;
+  }
+  .slot:hover .tag__name { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+  .tag__dims { margin-top: 0.3rem; font-size: 0.78rem; line-height: 1.35; color: var(--sage-ink); }
+  .tag__foot {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+    padding-top: 0.55rem;
+    border-top: 1px dashed var(--line);
+  }
+  .tag__price {
+    display: grid;
+    line-height: 1.2;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.95rem;
+  }
+  .tag__price span { font-size: 0.72rem; font-weight: 500; color: var(--sage-ink); }
+  .tag__wa {
+    position: relative;
+    z-index: 2;
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin: -0.35rem -0.35rem -0.35rem 0;
+    border-radius: 999px;
+    color: var(--green-deep);
+    border: 1.5px solid var(--line);
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .tag__wa:hover { background: var(--green); border-color: var(--green); color: var(--on-green); }
+  .tag__wa :global(svg) { width: 1.15rem; height: 1.15rem; }
+
+  /* Variante hero: etiqueta mínima con la altura real. */
+  .slot--hero .slot__tag { padding: 1rem 0.5rem 0.55rem; text-align: center; }
+  .tag__size { display: block; font: 700 1rem/1 var(--font-display); color: var(--green-deep); font-variant-numeric: tabular-nums; }
+  .tag__name--hero { font: 500 0.75rem/1.2 var(--font-text); color: var(--sage-ink); margin-top: 0.2rem; }
+  .slot--hero .slot__hang { max-width: 9rem; min-width: 3.1rem; margin-inline: auto; width: 100%; padding-bottom: 0; }
+  .tag__size { white-space: nowrap; }
+
+  @media (min-width: 48rem) { .slot--hero .slot__hang { min-width: 4.4rem; } }
+  @media (max-width: 23.99rem) { .tag__size { font-size: 0.85rem; } .slot--hero .slot__tag { padding-inline: 0.2rem; } .slot--hero .slot__hang { min-width: 3.5rem; padding-inline: 0.15rem; } }
+  @media (max-width: 47.99rem) {
+    .hide-sm { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .slot:hover .slot__hang, .slot:focus-within .slot__hang { transform: none; }
+  }
+</style>

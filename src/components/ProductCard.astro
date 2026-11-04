@@ -1,0 +1,95 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { formatCOP, lowestPrice, type Product } from '../data/products';
+import { waLink, productMessage } from '../lib/whatsapp';
+
+interface Props {
+  product: Product;
+  eager?: boolean;
+}
+const { product, eager = false } = Astro.props;
+const photo = product.photos[0];
+const low = lowestPrice(product);
+const prefix = product.onRequest ? 'Precio' : product.options.length > 1 ? 'Desde' : 'Precio';
+const priceLabel = product.onRequest ? 'A consultar' : formatCOP(low!);
+---
+
+<li class="card" data-category={product.category}>
+  <a class="card__link" href={`/catalogo/${product.slug}/`}>
+    <div class="arch card__photo" style={`view-transition-name: foto-${product.slug}`}>
+      <Image
+        src={photo.src}
+        alt={photo.alt}
+        widths={[200, 400]}
+        sizes="(min-width: 70rem) 260px, (min-width: 48rem) 30vw, 46vw"
+        loading={eager ? 'eager' : 'lazy'}
+        quality={80}
+      />
+    </div>
+    <h3 class="card__name">{product.name}</h3>
+  </a>
+  {product.dimensions && <p class="card__dims">{product.dimensions}</p>}
+  <div class="card__foot">
+    <p class="card__price"><span>{prefix}</span> {priceLabel}</p>
+    <a
+      class="card__wa"
+      href={waLink(productMessage(product))}
+      target="_blank"
+      rel="noopener"
+      aria-label={`Pedir ${product.name} por WhatsApp`}
+    >
+      <Icon name="whatsapp" />
+    </a>
+  </div>
+</li>
+
+<style>
+  .card { display: flex; flex-direction: column; min-width: 0; }
+  .card[hidden] { display: none; }
+  .card__link { text-decoration: none; display: block; }
+  .card__photo { aspect-ratio: 4 / 5; }
+  .card__photo :global(img) { transition: transform 0.7s var(--ease-out); }
+  .card__link:hover .card__photo :global(img) { transform: scale(1.04); }
+  .card__name {
+    margin-top: 0.9rem;
+    font-size: clamp(1.1rem, 2.6vw, 1.4rem);
+    color: var(--green-deep);
+  }
+  .card__link:hover .card__name { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+  .card__dims {
+    margin-top: 0.35rem;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--sage-ink);
+  }
+  .card__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.75rem;
+  }
+  .card__price {
+    display: grid;
+    line-height: 1.25;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.98rem;
+  }
+  .card__price span { font-size: 0.78rem; font-weight: 500; color: var(--sage-ink); }
+  .card__wa {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--line);
+    color: var(--green-deep);
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .card__wa:hover { background: var(--green); border-color: var(--green); color: var(--on-green); }
+  .card__wa :global(svg) { width: 1.2rem; height: 1.2rem; }
+</style>

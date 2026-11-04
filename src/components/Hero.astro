@@ -1,0 +1,172 @@
+---
+import Icon from './Icon.astro';
+import Sprig from './Sprig.astro';
+import ShelfItem from './ShelfItem.astro';
+import { site } from '../data/site';
+import { getProduct } from '../data/products';
+import { waLink, GENERAL_MESSAGE } from '../lib/whatsapp';
+
+// El mesón del hero: de lo más bajo a lo más alto, con la regla junto a la pieza más alta.
+// En móvil se muestran 4; en escritorio el texto ocupa la pared sobre las piezas bajas.
+// Fotos recortadas al matero, para que lo que se ve a escala sea la pieza y no la escena.
+import heroSmall from '../assets/catalogo/hero/gota-small-a.jpg';
+import hero27 from '../assets/catalogo/hero/gota-27-a.jpg';
+import heroRedondo from '../assets/catalogo/hero/redondo-30-a.jpg';
+import hero40 from '../assets/catalogo/hero/gota-40-b.jpg';
+import heroRect from '../assets/catalogo/hero/rectangular-60-a.jpg';
+import hero60 from '../assets/catalogo/hero/gota-60-a.jpg';
+import heroConico from '../assets/catalogo/hero/conico-70-b.jpg';
+
+const lineup = [
+  ['materos-gota-small', true, heroSmall],
+  ['matero-gota-27-cm', false, hero27],
+  ['matero-redondo-30-cm', false, heroRedondo],
+  ['matero-gota-40-cm', true, hero40],
+  ['matero-rectangular-60-cm', true, heroRect],
+  ['matero-gota-60-cm', false, hero60],
+  ['matero-conico-70-cm', false, heroConico],
+] as const;
+const items = lineup.map(([slug, hideSm, src]) => {
+  const product = getProduct(slug)!;
+  return { product, hideSm, photo: { src, alt: product.photos[0].alt } };
+});
+const ticks = [0, 10, 20, 30, 40, 50, 60, 70];
+---
+
+<section class="hero on-green" aria-labelledby="hero-title">
+  <Sprig class="hero__sprig" />
+  <div class="wrap hero__copy">
+    <h1 id="hero-title">Rustic Home</h1>
+    <p class="hero__slogan">{site.slogan}</p>
+    <p class="hero__lead">Materos de concreto a escala, uno junto al otro. Elige el tuyo y pídelo por WhatsApp.</p>
+    <div class="hero__ctas">
+      <a class="btn btn--light" href="#catalogo">Ver catálogo <Icon name="arrow" /></a>
+      <a class="btn btn--ghost-light" href={waLink(GENERAL_MESSAGE)} target="_blank" rel="noopener">
+        <Icon name="whatsapp" /> Pedir por WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <div class="hero__bench">
+    <div class="wrap hero__bench-inner">
+      <ul class="hero__row" role="list" aria-label="Materos a escala">
+        {items.map(({ product, hideSm, photo }) => <ShelfItem product={product} variant="hero" eager hideSm={hideSm} photo={photo} />)}
+      </ul>
+      <div class="ruler" aria-hidden="true">
+        {ticks.map((t) => <span style={`--t:${t}`}>{(t % 20 === 0 || t === 70) && t > 0 ? t : ''}</span>)}
+        <em>cm</em>
+      </div>
+    </div>
+    <div class="bench hero__plank" aria-hidden="true"></div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    --cm: 2.3px;
+    --tall: 70;
+    position: relative;
+    overflow: hidden;
+    background: var(--green);
+    color: var(--on-green);
+    padding-top: clamp(2.5rem, 7vw, 4.5rem);
+    padding-bottom: clamp(2.5rem, 6vw, 4rem);
+  }
+  @media (min-width: 48rem) { .hero { --cm: 3.2px; } }
+  @media (min-width: 70rem) { .hero { --cm: 4.2px; } }
+
+  .hero :global(.hero__sprig) {
+    position: absolute;
+    top: -1rem;
+    right: -1.5rem;
+    width: clamp(7rem, 18vw, 12rem);
+    color: var(--on-green-soft);
+    opacity: 0.4;
+    transform: rotate(8deg);
+  }
+  .hero__copy { position: relative; }
+  .hero h1 {
+    font-size: clamp(3.2rem, 13vw, 6rem);
+    line-height: 0.92;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    max-width: 7ch;
+  }
+  .hero__slogan {
+    margin-top: 1.25rem;
+    font-size: clamp(0.82rem, 2.4vw, 0.95rem);
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+  .hero__lead { margin-top: 0.75rem; max-width: 38ch; color: var(--on-green-soft); }
+  .hero__ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem; }
+
+  /* El mesón: una tabla continua, ubicada justo bajo la pieza más alta. */
+  .hero__bench { position: relative; margin-top: clamp(2.5rem, 6vw, 3.5rem); }
+  .hero__bench-inner { position: relative; z-index: 1; padding-right: 2.6rem; }
+  .hero__plank {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(var(--tall) * var(--cm));
+  }
+  .hero__row {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+  }
+  .hero__row :global(.slot__stage) { height: calc(var(--tall) * var(--cm)); flex: none; }
+  .hero__row :global(.bench) { visibility: hidden; }
+  .hero__row :global(.slot) { flex: 0 1 auto; }
+
+  .ruler {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 1rem;
+    height: calc(var(--tall) * var(--cm));
+    border-right: 1px solid var(--on-green-soft);
+  }
+  .ruler span {
+    position: absolute;
+    right: 0;
+    bottom: calc(var(--t) * var(--cm));
+    width: 0.4rem;
+    height: 1px;
+    background: var(--on-green-soft);
+  }
+  .ruler span:nth-child(odd) { width: 0.65rem; }
+  .ruler span {
+    font-size: 0.75rem;
+    line-height: 0;
+    color: var(--on-green-soft);
+    font-variant-numeric: tabular-nums;
+    text-indent: -1.35rem;
+    white-space: nowrap;
+  }
+  .ruler em {
+    position: absolute;
+    top: -1.7rem;
+    right: -0.2rem;
+    font-style: normal;
+    font-size: 0.75rem;
+    color: var(--on-green-soft);
+  }
+
+  @media (max-width: 23.99rem) { .hero { --cm: 2.05px; } }
+  @media (min-width: 48rem) {
+    .hero__bench-inner { padding-right: 3.25rem; }
+    .ruler span, .ruler em { font-size: 0.8rem; }
+  }
+  /* Escritorio: el texto vive en la pared, sobre las piezas bajas; las altas suben a su lado. */
+  @media (min-width: 70rem) {
+    .hero__copy { position: relative; z-index: 2; }
+    .hero__lead { max-width: 34ch; }
+    .hero__bench { margin-top: calc(-1 * (var(--tall) * var(--cm)) + 5.5rem); }
+    .hero__row { padding-left: 34%; justify-content: space-between; }
+  }
+</style>

@@ -1,0 +1,58 @@
+---
+import ShelfItem from './ShelfItem.astro';
+import type { Product } from '../data/products';
+
+interface Props {
+  products: Product[];
+  title?: string;
+  id?: string;
+  /** Nivel del título (h2 en el catálogo, h3 dentro de otras secciones). */
+  level?: 2 | 3;
+  eager?: boolean;
+}
+const { products, title, id, level = 3, eager = false } = Astro.props;
+// Como en un vivero: de lo más alto a lo más bajo.
+const items = [...products].sort((a, b) => (b.size?.h ?? -1) - (a.size?.h ?? -1));
+const Heading = `h${level}` as 'h2' | 'h3';
+---
+
+<div class="shelf" id={id}>
+  {title && (
+    <div class="shelf__head">
+      <Heading class="shelf__title">{title}</Heading>
+    </div>
+  )}
+  <ul class="shelf__row" role="list">
+    {items.map((p, i) => <ShelfItem product={p} eager={eager && i < 3} />)}
+  </ul>
+</div>
+
+<style>
+  .shelf__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .shelf__title {
+    font-size: clamp(1.7rem, 4.5vw, 2.5rem);
+    color: var(--on-green);
+  }
+  .shelf__row {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+    /* Cada producto ocupa 3 filas (pieza, mesón, etiqueta) para que el mesón quede alineado en toda la fila. */
+    grid-auto-rows: auto auto auto;
+    row-gap: 0;
+    overflow-x: clip;
+    overflow-clip-margin: 1rem;
+    isolation: isolate;
+  }
+  @media (min-width: 48rem) { .shelf__row { grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); } }
+  @media (min-width: 70rem) { .shelf__row { grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr)); } }
+</style>

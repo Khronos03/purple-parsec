@@ -1,0 +1,38 @@
+---
+import Icon from './Icon.astro';
+import { waLink, GENERAL_MESSAGE } from '../lib/whatsapp';
+---
+
+<a class="fab" href={waLink(GENERAL_MESSAGE)} target="_blank" rel="noopener" aria-label="Escribir a Rustic Home por WhatsApp">
+  <Icon name="whatsapp" />
+</a>
+
+<script>
+  // Aparece cuando el hero (que ya tiene sus propios botones) sale de la vista.
+  const fab = document.querySelector<HTMLElement>('.fab');
+  const hero = document.querySelector('.hero');
+  if (fab && hero && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => fab.classList.toggle('fab--away', entry.isIntersecting)).observe(hero);
+  }
+</script>
+
+<style>
+  .fab {
+    position: fixed;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 999px;
+    background: var(--green-ink);
+    color: var(--on-green);
+    box-shadow: 0 6px 18px rgb(34 48 26 / 0.28);
+    transition: transform 0.4s var(--ease-out), opacity 0.3s var(--ease-out), background-color 0.2s;
+  }
+  .fab--away { opacity: 0; transform: translateY(1rem) scale(0.9); pointer-events: none; }
+  .fab:hover { transform: translateY(-2px); background: #33461f; }
+  .fab :global(svg) { width: 1.6rem; height: 1.6rem; }
+</style>

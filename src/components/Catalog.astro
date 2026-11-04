@@ -1,0 +1,107 @@
+---
+import Shelf from './Shelf.astro';
+import Sprig from './Sprig.astro';
+import { products, type CategoryId } from '../data/products';
+
+/** Mesones del catálogo: agrupación por forma. */
+const shelves: { id: string; title: string; categories: CategoryId[] }[] = [
+  { id: 'gota-redondo', title: 'Gota y redondo', categories: ['gota', 'redondo'] },
+  { id: 'altos-jardineras', title: 'Altos y jardineras', categories: ['alto', 'jardinera'] },
+  { id: 'decoracion', title: 'Decoración', categories: ['decoracion'] },
+].map((s) => ({ ...s, items: products.filter((p) => s.categories.includes(p.category)) }));
+---
+
+<section class="catalog on-green" id="catalogo" aria-labelledby="catalogo-title">
+  <Sprig class="catalog__sprig" />
+  <div class="wrap">
+    <div class="catalog__head">
+      <h2 id="catalogo-title">Catálogo</h2>
+      <p>
+        Elige un producto para ver sus medidas y acabados y pedirlo por WhatsApp. Precios en pesos colombianos según el
+        catálogo vigente. Ningún matero incluye la mata.
+      </p>
+    </div>
+
+    <nav class="catalog__nav" aria-label="Mesones del catálogo">
+      {shelves.map((s) => <a href={`#${s.id}`}>{s.title}</a>)}
+    </nav>
+
+    <div class="catalog__shelves">
+      {shelves.map((s, i) => <Shelf products={s.items} title={s.title} id={s.id} eager={i === 0} />)}
+    </div>
+  </div>
+</section>
+
+<script>
+  // Marca en los chips el mesón que se está viendo.
+  const chips = [...document.querySelectorAll<HTMLAnchorElement>('.catalog__nav a')];
+  const shelves = chips.map((a) => document.querySelector(a.hash)).filter(Boolean) as Element[];
+  if ('IntersectionObserver' in window && shelves.length) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          chips.forEach((a) => a.setAttribute('aria-current', String(a.hash === `#${e.target.id}`)));
+        }
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    shelves.forEach((s) => io.observe(s));
+  }
+</script>
+
+<style>
+  .catalog {
+    position: relative;
+    overflow: hidden;
+    background: var(--green);
+    color: var(--on-green);
+    padding-block: clamp(3.5rem, 8vw, 6rem) clamp(4rem, 9vw, 7rem);
+    border-top: 1px solid rgb(246 245 239 / 0.16);
+  }
+  .catalog :global(.catalog__sprig) {
+    position: absolute;
+    left: -2.5rem;
+    bottom: 2rem;
+    width: clamp(8rem, 20vw, 13rem);
+    color: var(--on-green-soft);
+    opacity: 0.25;
+    transform: scaleX(-1) rotate(-8deg);
+  }
+  .catalog__head { display: grid; gap: 1rem; align-items: end; }
+  .catalog__head h2 {
+    font-size: clamp(3rem, 10vw, 6rem);
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+  }
+  .catalog__head p { color: var(--on-green-soft); max-width: 48ch; }
+
+  .catalog__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.75rem;
+  }
+  .catalog__nav a {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.5rem 1.1rem;
+    border: 1.5px solid rgb(246 245 239 / 0.45);
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .catalog__nav a:hover { border-color: var(--on-green); }
+  .catalog__nav a[aria-current='true'] { background: var(--on-green); color: var(--green-ink); border-color: var(--on-green); }
+
+  .catalog__shelves { display: grid; gap: clamp(3.5rem, 8vw, 5.5rem); margin-top: clamp(2.5rem, 6vw, 4rem); }
+
+  @media (min-width: 48rem) {
+    .catalog__head { grid-template-columns: 1fr auto; }
+    .catalog__head p { text-align: right; }
+  }
+</style>

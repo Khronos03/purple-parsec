@@ -1,0 +1,62 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import Sprig from '../components/Sprig.astro';
+import { waLink, GENERAL_MESSAGE } from '../lib/whatsapp';
+---
+
+<Layout title="Página no encontrada" description="Esta página no existe. Vuelve al catálogo de Rustic Home.">
+  <section class="lost on-green" aria-labelledby="lost-title">
+    <Sprig class="lost__sprig" />
+    <div class="wrap lost__inner">
+      <div class="lost__stage" aria-hidden="true">
+        <div class="lost__empty"></div>
+      </div>
+      <div class="bench" aria-hidden="true"></div>
+      <div class="string" aria-hidden="true"></div>
+      <div class="tag lost__tag">
+        <h1 id="lost-title">Este espacio del mesón está vacío</h1>
+        <p>La página que buscas no existe o cambió de dirección. Los materos siguen en el catálogo.</p>
+        <div class="lost__actions">
+          <a class="btn btn--solid" href="/#catalogo">Ver catálogo <Icon name="arrow" /></a>
+          <a class="btn lost__wa" href={waLink(GENERAL_MESSAGE)} target="_blank" rel="noopener"><Icon name="whatsapp" /> Escribir por WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .lost {
+    position: relative;
+    overflow-x: clip;
+    background: var(--green);
+    color: var(--on-green);
+    padding-block: clamp(3rem, 9vw, 6rem);
+  }
+  .lost :global(.lost__sprig) {
+    position: absolute;
+    top: 1rem;
+    right: -2rem;
+    width: clamp(7rem, 18vw, 12rem);
+    color: var(--on-green-soft);
+    opacity: 0.35;
+  }
+  .lost__inner { max-width: 34rem; }
+  .lost__stage { display: flex; justify-content: center; }
+  .lost__empty {
+    width: 7rem;
+    height: 8.75rem;
+    border-radius: 999px 999px 0 0;
+    border: 1.5px dashed rgb(246 245 239 / 0.6);
+    border-bottom: 0;
+  }
+  .lost .bench { margin-inline: calc(-1 * var(--gutter)); }
+  .lost .string { height: 1.5rem; }
+  .lost__tag { padding: 2rem 1.5rem 1.5rem; text-align: center; }
+  .lost__tag h1 { font-size: clamp(1.7rem, 5vw, 2.3rem); color: var(--green-deep); }
+  .lost__tag p { margin-top: 0.75rem; color: var(--sage-ink); }
+  .lost__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; margin-top: 1.5rem; }
+  .lost__wa { border-color: var(--line); color: var(--green-deep); }
+  .lost__wa:hover { border-color: var(--green); }
+</style>

@@ -1,0 +1,166 @@
+---
+import Icon from './Icon.astro';
+import { waLink, GENERAL_MESSAGE } from '../lib/whatsapp';
+
+const links = [
+  { href: '/#catalogo', label: 'Catálogo' },
+  { href: '/#concreto', label: 'Acabados' },
+  { href: '/#contacto', label: 'Contacto' },
+];
+---
+
+<header class="header on-green">
+  <div class="wrap header__bar">
+    <a class="brand" href="/" aria-label="Rustic Home, inicio">
+      <Icon name="leaf" class="brand__leaf" />
+      <span>Rustic Home</span>
+    </a>
+
+    <nav class="nav" aria-label="Principal">
+      <ul>
+        {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <a class="btn btn--light header__wa" href={waLink(GENERAL_MESSAGE)} target="_blank" rel="noopener" data-wa>
+        <Icon name="whatsapp" />
+        <span>Pedir<span class="hide-sm"> por WhatsApp</span></span>
+      </a>
+
+      <details class="menu">
+        <summary aria-label="Abrir menú"><Icon name="menu" /></summary>
+        <nav aria-label="Menú móvil">
+          <ul>
+            {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+          </ul>
+        </nav>
+      </details>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Menú móvil: se cierra al elegir una sección, con Esc o al tocar fuera.
+  document.querySelectorAll<HTMLDetailsElement>('.menu').forEach((menu) => {
+    const summary = menu.querySelector('summary');
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) menu.open = false;
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.open) {
+        menu.open = false;
+        summary?.focus();
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (menu.open && !menu.contains(e.target as Node)) menu.open = false;
+    });
+  });
+</script>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--green);
+    color: var(--on-green);
+    border-bottom: 1px solid rgb(246 245 239 / 0.14);
+  }
+  .header__bar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    min-height: 4rem;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font: 700 1.25rem/1 var(--font-display);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .brand :global(.brand__leaf) { width: 1.15rem; height: 1.15rem; color: var(--on-green-soft); }
+
+  .nav { margin-left: auto; }
+  .nav ul, .menu ul { list-style: none; margin: 0; padding: 0; }
+  .nav ul { display: flex; gap: 1.75rem; }
+  .nav a {
+    font-size: 0.95rem;
+    text-decoration: none;
+    color: var(--on-green-soft);
+    padding-block: 0.5rem;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: color 0.2s, background-size 0.35s var(--ease-out);
+  }
+  .nav a:hover { color: var(--on-green); background-size: 100% 1px; }
+
+  .header__actions { display: flex; align-items: center; gap: 0.5rem; }
+  .header__wa { min-height: 2.75rem; padding: 0.6rem 1.1rem; font-size: 0.95rem; }
+
+  .menu { display: none; position: relative; }
+  .menu summary {
+    display: grid; place-items: center;
+    width: 2.75rem; height: 2.75rem;
+    list-style: none; cursor: pointer;
+    border-radius: 999px;
+    border: 1.5px solid rgb(246 245 239 / 0.5);
+  }
+  .menu summary::-webkit-details-marker { display: none; }
+  .menu summary :global(svg) { width: 1.25rem; height: 1.25rem; }
+  /* El menú es otra etiqueta que cuelga del botón. */
+  .menu nav {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 1.1rem);
+    min-width: 14rem;
+    background: var(--tag);
+    color: var(--green-ink);
+    padding: 1.4rem 0.5rem 0.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 14px rgb(20 30 12 / 0.22);
+  }
+  .menu nav::before {
+    content: '';
+    position: absolute;
+    top: 0.55rem;
+    right: 1.2rem;
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--green);
+  }
+  .menu nav::after {
+    content: '';
+    position: absolute;
+    top: -1.1rem;
+    right: calc(1.2rem + 0.2rem);
+    width: 1px;
+    height: 1.65rem;
+    background: var(--string);
+  }
+  .menu nav a {
+    display: block;
+    padding: 0.85rem 1rem;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .menu nav a { border-radius: 0.35rem; }
+  .menu nav a:hover { background: #f3f6ee; }
+
+  @media (max-width: 52rem) {
+    .nav { display: none; }
+    .menu { display: block; }
+    .header__actions { margin-left: auto; }
+  }
+  @media (max-width: 30rem) {
+    .hide-sm { display: none; }
+    .header__bar { gap: 0.75rem; }
+    .brand { font-size: 1.05rem; letter-spacing: 0.04em; }
+    .header__wa { padding-inline: 0.9rem; }
+  }
+</style>

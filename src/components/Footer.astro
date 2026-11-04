@@ -1,0 +1,125 @@
+---
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+import { waLink, GENERAL_MESSAGE } from '../lib/whatsapp';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="footer" id="contacto">
+  <div class="footer__main">
+    <div class="wrap footer__grid">
+      <div class="footer__intro">
+        <h2>¿Cuál le va a tu espacio?</h2>
+        <p>Escríbenos y te ayudamos a elegir modelo, tamaño y acabado.</p>
+        <a class="btn btn--solid" href={waLink(GENERAL_MESSAGE)} target="_blank" rel="noopener">
+          <Icon name="whatsapp" /> Escribir por WhatsApp
+        </a>
+      </div>
+
+      <ul class="footer__channels">
+        <li>
+          <a href={waLink(GENERAL_MESSAGE)} target="_blank" rel="noopener">
+            <Icon name="whatsapp" />
+            <span><small>WhatsApp</small>{site.whatsapp.display}</span>
+          </a>
+        </li>
+        <li>
+          <a href={site.instagram.url} target="_blank" rel="noopener">
+            <Icon name="instagram" />
+            <span><small>Instagram</small>{site.instagram.handle}</span>
+          </a>
+        </li>
+        <li>
+          <a href={site.tiktok.url} target="_blank" rel="noopener">
+            <Icon name="tiktok" />
+            <span><small>TikTok</small>{site.tiktok.handle}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer__band">
+    <div class="wrap footer__band-inner">
+      <a class="footer__brand" href="/">Rustic Home</a>
+      <a href="/#catalogo">Ver catálogo</a>
+      <span>© {year} · Desarrollado por J. Alexander Suaza M. con 💚</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer__main {
+    background: var(--paper);
+    color: var(--green-ink);
+    padding-block: clamp(3.5rem, 8vw, 6rem);
+  }
+  .footer__grid {
+    display: grid;
+    gap: 2.75rem;
+    align-items: end;
+  }
+  .footer__intro h2 {
+    color: var(--green-deep);
+    font-size: clamp(2.25rem, 6vw, 4rem);
+    max-width: 12ch;
+  }
+  .footer__intro p {
+    margin-top: 1rem;
+    margin-bottom: 1.75rem;
+    color: var(--sage-ink);
+    max-width: 36ch;
+  }
+  .footer__channels {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--green-ink);
+  }
+  .footer__channels a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 1.1rem;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+    font-size: 1.125rem;
+    transition: padding 0.3s var(--ease-out);
+  }
+  .footer__channels a:hover { padding-left: 0.5rem; }
+  .footer__channels :global(svg) { width: 1.5rem; height: 1.5rem; flex: none; color: var(--green); }
+  .footer__channels span { display: grid; }
+  .footer__channels small {
+    font-size: 0.8rem;
+    color: var(--sage-ink);
+  }
+
+  .footer__band {
+    background: var(--sage);
+    color: var(--green-ink);
+    font-size: 0.9rem;
+    padding-block: 1.1rem calc(1.1rem + 4.5rem);
+  }
+  .footer__band-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    align-items: baseline;
+  }
+  .footer__brand {
+    font: 700 1rem/1 var(--font-display);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .footer__band span { margin-left: auto; color: #3f453a; }
+
+  @media (min-width: 52rem) {
+    .footer__grid { grid-template-columns: 1.2fr 1fr; gap: 4rem; }
+    .footer__band { padding-bottom: 1.1rem; }
+  }
+  @media (max-width: 40rem) {
+    .footer__band span { margin-left: 0; }
+  }
+</style>

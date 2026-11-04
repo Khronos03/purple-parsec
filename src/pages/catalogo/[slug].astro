@@ -1,0 +1,557 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Layout from '../../layouts/Layout.astro';
+import Shelf from '../../components/Shelf.astro';
+import Sprig from '../../components/Sprig.astro';
+import Icon from '../../components/Icon.astro';
+import { products, formatCOP, SWATCHES, FINISH_NOTES, type Product } from '../../data/products';
+import { waLink, productMessage } from '../../lib/whatsapp';
+
+export function getStaticPaths() {
+  return products.map((product) => ({ params: { slug: product.slug }, props: { product } }));
+}
+
+interface Props {
+  product: Product;
+}
+const { product } = Astro.props;
+const [main] = product.photos;
+const first = product.options[0];
+const size = product.size;
+const hasFinish = product.options.some((o) => FINISH_NOTES[o.name]);
+const gallery = product.photos.length > 1;
+
+const related = [
+  ...products.filter((p) => p.slug !== product.slug && p.category === product.category),
+  ...products.filter((p) => p.slug !== product.slug && p.category !== product.category),
+].slice(0, 5);
+
+const initialMessage = productMessage(product, { option: first });
+const clientData = JSON.stringify({
+  name: product.name,
+  options: product.options,
+  base: product.base,
+  onRequest: product.onRequest ?? false,
+});
+
+const prices = product.options.map((o) => o.price);
+const description = [
+  product.description,
+  product.dimensions && `Medidas: ${product.dimensions}.`,
+  prices.length && `Desde ${formatCOP(Math.min(...prices))}.`,
+  'Pide por WhatsApp.',
+]
+  .filter(Boolean)
+  .join(' ');
+
+// OG con la foto del producto. JSON-LD de producto solo con dominio definido (requiere URLs absolutas).
+const og = await getImage({ src: main.src, width: Math.min(main.src.width, 800), format: 'jpg' });
+const jsonLd =
+  Astro.site && prices.length
+    ? [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: product.name,
+          image: new URL(og.src, Astro.site).href,
+          description,
+          brand: { '@type': 'Brand', name: 'Rustic Home' },
+          offers: {
+            '@type': 'AggregateOffer',
+            priceCurrency: 'COP',
+            lowPrice: Math.min(...prices),
+            highPrice: Math.max(...prices),
+            offerCount: prices.length,
+          },
+        },
+      ]
+    : [];
+---
+
+<Layout title={product.name} description={description} ogImage={og.src} hideFab jsonLd={jsonLd}>
+  <article class="product on-green" data-product={clientData}>
+    <Sprig class="product__sprig" />
+    <div class="wrap">
+      <a class="product__back" href="/#catalogo"><Icon name="back" /> Catálogo</a>
+
+      <div class="product__layout">
+        <div class="product__media">
+          <div class="product__stage">
+            {size && (
+              <p class="cota cota--v"><span>{size.h} cm de alto</span></p>
+            )}
+            <div class="arch product__main" style={`view-transition-name: foto-${product.slug}`}>
+              <Image
+                src={main.src}
+                alt={main.alt}
+                widths={[400, main.src.width]}
+                sizes="(min-width: 56rem) 420px, 78vw"
+                loading="eager"
+                fetchpriority="high"
+                quality={84}
+              />
+            </div>
+          </div>
+          <div class="bench" aria-hidden="true"></div>
+          {size && (
+            <p class="cota cota--h"><span>{size.w} cm de {product.category === 'jardinera' ? 'largo' : 'ancho'}</span></p>
+          )}
+          {gallery && (
+            <ul class="product__more" role="list" aria-label="Fotos del producto">
+              {product.photos.map((ph, i) => (
+                <li>
+                  <button type="button" class="arch product__thumb" aria-pressed={i === 0 ? 'true' : 'false'} aria-label={`Ver foto ${i + 1} de ${product.photos.length}`} data-thumb>
+                    <Image src={ph.src} alt={ph.alt} widths={[400, ph.src.width]} sizes="(min-width: 56rem) 120px, 26vw" quality={84} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div class="product__hang">
+          <div class="string product__string" aria-hidden="true"></div>
+          <div class="tag product__tag">
+            <h1>{product.name}</h1>
+            {product.description && <p class="product__desc">{product.description}</p>}
+
+            {(product.dimensions || product.material || product.includesPlant === false) && (
+              <dl class="specs">
+                {product.dimensions && (<div><dt>Medidas</dt><dd>{product.dimensions}</dd></div>)}
+                {product.material && (<div><dt>Material</dt><dd>{product.material}</dd></div>)}
+                {product.includesPlant === false && (<div><dt>Planta</dt><dd>No incluye la mata</dd></div>)}
+              </dl>
+            )}
+
+            {product.options.length > 0 ? (
+              <form class="order" data-order>
+                <fieldset>
+                  <legend>{hasFinish ? 'Elige color o acabado' : 'Elige el color'}</legend>
+                  {product.options.map((o, i) => (
+                    <label class="opt">
+                      <input type="radio" name="acabado" value={i} checked={i === 0} />
+                      <span class:list={['swatch', { 'swatch--finish': !SWATCHES[o.name] }]} style={SWATCHES[o.name] ? `--swatch:${SWATCHES[o.name]}` : undefined} aria-hidden="true"></span>
+                      <span class="opt__text">
+                        <span class="opt__name">{o.name}</span>
+                        {FINISH_NOTES[o.name] && <span class="opt__note">{FINISH_NOTES[o.name]}</span>}
+                      </span>
+                      <span class="opt__price">{formatCOP(o.price)}</span>
+                    </label>
+                  ))}
+                </fieldset>
+
+                {product.base && (
+                  <label class="opt opt--base">
+                    <input type="checkbox" name="base" />
+                    <span class="opt__name">Agregar {product.base.label.toLowerCase()}</span>
+                    <span class="opt__price">+{formatCOP(product.base.price)}</span>
+                  </label>
+                )}
+
+                <div class="qty">
+                  <label for="cantidad">Cantidad</label>
+                  <div class="qty__ctl">
+                    <button type="button" data-step="-1" aria-label="Quitar una unidad">−</button>
+                    <input id="cantidad" name="cantidad" type="number" inputmode="numeric" min="1" max="50" value="1" />
+                    <button type="button" data-step="1" aria-label="Agregar una unidad">+</button>
+                  </div>
+                </div>
+
+                <div class="buy buy--inline">
+                  <p class="buy__total">
+                    <span>Total</span>
+                    <output data-total>{formatCOP(first.price)}</output>
+                  </p>
+                  <a class="btn btn--solid buy__cta" href={waLink(initialMessage)} target="_blank" rel="noopener" data-wa>
+                    <Icon name="whatsapp" /> Pedir por WhatsApp
+                  </a>
+                </div>
+                <div class="preview">
+                  <p class="preview__label">Se abrirá WhatsApp con este mensaje, que puedes editar antes de enviar:</p>
+                  <p class="preview__text" data-preview>{initialMessage}</p>
+                </div>
+                <p class="order__note">Precios del catálogo. Te confirmamos disponibilidad por WhatsApp.</p>
+              </form>
+            ) : (
+              <div class="buy buy--inline buy--request">
+                <p class="buy__total"><span>Precio</span><output>A consultar</output></p>
+                <a class="btn btn--solid buy__cta" href={waLink(initialMessage)} target="_blank" rel="noopener" data-wa>
+                  <Icon name="whatsapp" /> Pedir catálogo de lunas
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="buy buy--bar">
+      <p class="buy__total">
+        <span>{first ? 'Total' : 'Precio'}</span>
+        <output data-total>{first ? formatCOP(first.price) : 'A consultar'}</output>
+      </p>
+      <a class="btn btn--solid buy__cta" href={waLink(initialMessage)} target="_blank" rel="noopener" data-wa>
+        <Icon name="whatsapp" /> {first ? 'Pedir' : 'Consultar'}
+      </a>
+    </div>
+  </article>
+
+  <section class="related on-green" aria-label="Otros productos">
+    <div class="wrap">
+      <Shelf products={related} title="También te puede gustar" level={2} />
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import { productMessage, waLink } from '../../lib/whatsapp';
+  import { formatCOP } from '../../lib/format';
+
+  const article = document.querySelector<HTMLElement>('[data-product]');
+  const form = document.querySelector<HTMLFormElement>('[data-order]');
+
+  // Galería: las miniaturas cambian la foto principal.
+  const mainImg = document.querySelector<HTMLImageElement>('.product__main img');
+  document.querySelectorAll<HTMLButtonElement>('[data-thumb]').forEach((btn, _i, all) => {
+    btn.addEventListener('click', () => {
+      const img = btn.querySelector('img');
+      if (!img || !mainImg) return;
+      mainImg.srcset = img.srcset;
+      mainImg.src = img.src;
+      mainImg.alt = img.alt;
+      all.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    });
+  });
+
+  if (article && form) {
+    const product = JSON.parse(article.dataset.product!);
+    const totals = document.querySelectorAll('[data-total]');
+    const links = document.querySelectorAll<HTMLAnchorElement>('[data-wa]');
+    const preview = document.querySelector('[data-preview]');
+    const qtyInput = form.querySelector<HTMLInputElement>('#cantidad')!;
+    const radios = [...form.querySelectorAll<HTMLInputElement>('input[name=acabado]')];
+    const baseBox = form.querySelector<HTMLInputElement>('input[name=base]');
+
+    // Restaurar la selección desde la URL (?acabado=..&base=1&cantidad=..): sobrevive a recargas y se puede compartir.
+    const params = new URLSearchParams(location.search);
+    const wanted = params.get('acabado');
+    const match = radios.find((r) => product.options[Number(r.value)].name === wanted);
+    if (match) match.checked = true;
+    if (baseBox && params.get('base') === '1') baseBox.checked = true;
+    const q = Number(params.get('cantidad'));
+    if (q >= 1 && q <= 50) qtyInput.value = String(Math.round(q));
+
+    const clampQty = () => {
+      const n = Math.min(50, Math.max(1, Math.round(Number(qtyInput.value) || 1)));
+      qtyInput.value = String(n);
+      return n;
+    };
+
+    const update = (stamp = true) => {
+      const data = new FormData(form);
+      const option = product.options[Number(data.get('acabado') ?? 0)];
+      const withBase = data.has('base');
+      const qty = clampQty();
+      const sum = (option.price + (withBase && product.base ? product.base.price : 0)) * qty;
+      totals.forEach((t) => {
+        const next = formatCOP(sum);
+        if (t.textContent === next) return;
+        t.textContent = next;
+        if (!stamp) return;
+        t.classList.remove('stamp');
+        void (t as HTMLElement).offsetWidth; // reinicia la animación
+        t.classList.add('stamp');
+      });
+      const message = productMessage(product, { option, withBase, qty });
+      const href = waLink(message);
+      links.forEach((a) => (a.href = href));
+      if (preview) preview.textContent = message;
+
+      const next = new URLSearchParams({ acabado: option.name });
+      if (withBase) next.set('base', '1');
+      if (qty > 1) next.set('cantidad', String(qty));
+      history.replaceState(history.state, '', `${location.pathname}?${next}`);
+    };
+
+    form.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((b) =>
+      b.addEventListener('click', () => {
+        qtyInput.value = String(clampQty() + Number(b.dataset.step));
+        update();
+      }),
+    );
+    form.addEventListener('change', () => update());
+    qtyInput.addEventListener('input', () => { if (qtyInput.value !== '') update(); });
+    form.addEventListener('submit', (e) => e.preventDefault());
+    update(false);
+  }
+</script>
+
+<style>
+  .product {
+    position: relative;
+    /* clip (no hidden): contiene la ramita sin romper position: sticky */
+    overflow-x: clip;
+    background: var(--green);
+    color: var(--on-green);
+    padding-top: 1rem;
+  }
+  .product :global(.product__sprig) {
+    position: absolute;
+    top: 3rem;
+    right: -2rem;
+    width: clamp(7rem, 18vw, 12rem);
+    color: var(--on-green-soft);
+    opacity: 0.35;
+  }
+  .product__back {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.75rem;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .product__back :global(svg) { width: 1.1rem; height: 1.1rem; }
+  .product__back:hover { text-decoration: underline; }
+
+  .product__layout {
+    position: relative;
+    display: grid;
+    gap: 1rem;
+    padding-block: 1.5rem clamp(3rem, 7vw, 5rem);
+  }
+
+  /* La pieza sobre el mesón, con cotas como en un plano. */
+  .product__stage {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding-left: 2.25rem;
+  }
+  .product__main { aspect-ratio: 4 / 5; width: min(100%, 17rem); }
+  @media (min-width: 56rem) { .product__main { width: min(100%, 26rem); } }
+  .product__media .bench { margin-inline: calc(-1 * var(--gutter)); }
+  .cota {
+    font-size: 0.8rem;
+    color: var(--on-green-soft);
+    font-variant-numeric: tabular-nums;
+  }
+  .cota--v {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1.5rem;
+    border-right: 1px solid var(--on-green-soft);
+  }
+  .cota--v::before, .cota--v::after {
+    content: '';
+    position: absolute;
+    right: -0.35rem;
+    width: 0.7rem;
+    height: 1px;
+    background: var(--on-green-soft);
+  }
+  .cota--v::before { top: 0; }
+  .cota--v::after { bottom: 0; }
+  .cota--v span {
+    position: absolute;
+    top: 50%;
+    left: 0.35rem;
+    transform: translate(-50%, -50%) rotate(-90deg);
+    white-space: nowrap;
+  }
+  .cota--h { text-align: center; margin-top: 0.6rem; padding-left: 2.25rem; }
+
+  .product__more {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0 0 0 2.25rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+  .product__more li { width: min(26%, 7rem); }
+  .product__thumb {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    opacity: 0.7;
+    outline-offset: 3px;
+    transition: opacity 0.2s, box-shadow 0.2s;
+  }
+  .product__thumb:hover { opacity: 1; }
+  .product__thumb[aria-pressed='true'] { opacity: 1; box-shadow: 0 0 0 2px var(--on-green); }
+  .product__thumb:focus-visible { outline: 3px solid var(--focus); }
+
+  /* La etiqueta grande es el formulario. Cuelga de un clavo. */
+  .product__hang { position: relative; padding-top: 1rem; }
+  .product__string { height: 1.75rem; }
+  .product__tag { padding: 2rem clamp(1.1rem, 4vw, 2rem) 1.5rem; border-radius: 0.6rem; }
+  .product__tag::before { top: 0.8rem; width: 0.6rem; height: 0.6rem; margin-left: -0.3rem; }
+
+  .product__tag h1 {
+    font-size: clamp(2.1rem, 6.5vw, 3.2rem);
+    color: var(--green-deep);
+  }
+  .product__desc {
+    margin-top: 0.85rem;
+    font-size: 1.1rem;
+    color: var(--green);
+    max-width: 40ch;
+  }
+
+  .specs { margin: 1.5rem 0 0; border-top: 1px solid var(--green-ink); }
+  .specs div {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: 1rem;
+    padding-block: 0.75rem;
+    border-bottom: 1px dashed var(--line);
+  }
+  .specs dt { font-weight: 600; }
+  .specs dd { margin: 0; color: var(--sage-ink); }
+
+  .order { margin-top: 1.75rem; }
+  .order fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+  .order legend {
+    font: 600 1.2rem/1.2 var(--font-display);
+    color: var(--green-deep);
+    margin-bottom: 0.8rem;
+    padding: 0;
+  }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    min-height: 3.25rem;
+    padding: 0.7rem 0.95rem;
+    border: 1.5px solid var(--line);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+  .opt:hover { border-color: var(--green); }
+  .opt:has(input:checked) { border-color: var(--green); background: #f3f6ee; }
+  .opt:has(input:focus-visible) { outline: 3px solid var(--green); outline-offset: 2px; }
+  .opt input { width: 1.15rem; height: 1.15rem; margin: 0; flex: none; }
+  .opt input:focus-visible { outline: none; }
+  .opt__text { display: grid; gap: 0.1rem; }
+  .opt__name { font-weight: 500; }
+  .opt__note { font-size: 0.8rem; line-height: 1.35; color: var(--sage-ink); }
+  .swatch {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: var(--swatch);
+    box-shadow: inset 0 0 0 1px rgb(34 48 26 / 0.25);
+  }
+  /* Acabados sin muestra fotográfica: se indican con un anillo punteado, no con un color inventado. */
+  .swatch--finish { background: none; box-shadow: none; border: 1.5px dashed var(--sage-ink); }
+  .opt:has(input:checked) .swatch { box-shadow: inset 0 0 0 1px rgb(34 48 26 / 0.25), 0 0 0 2px #f3f6ee, 0 0 0 3.5px var(--green); }
+  .opt:has(input:checked) .swatch--finish { border-style: solid; border-color: var(--green); box-shadow: none; }
+  .opt__price { margin-left: auto; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .opt--base { margin-top: 0.9rem; border-style: dashed; }
+  .opt--base:has(input:checked) { border-style: solid; }
+
+  .buy {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.4rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--green-ink);
+  }
+  .buy__total { display: grid; line-height: 1.2; }
+  .buy__total span { font-size: 0.85rem; color: var(--sage-ink); }
+  .buy__total output {
+    font: 700 1.9rem/1.1 var(--font-display);
+    color: var(--green-deep);
+    font-variant-numeric: tabular-nums;
+    transform-origin: 0 60%;
+  }
+  .buy__total output:global(.stamp) { animation: stamp 0.45s var(--ease-out); }
+  @keyframes stamp {
+    from { transform: scale(1.18) rotate(-2deg); opacity: 0.4; }
+    to { transform: none; opacity: 1; }
+  }
+  .buy--request { margin-top: 2rem; }
+
+  .qty { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1.1rem; }
+  .qty label { font-weight: 600; }
+  .qty__ctl { display: flex; align-items: center; border: 1.5px solid var(--line); border-radius: 999px; }
+  .qty__ctl button {
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 0;
+    background: none;
+    font: 600 1.25rem/1 var(--font-text);
+    color: var(--green-deep);
+    cursor: pointer;
+    border-radius: 999px;
+  }
+  .qty__ctl button:hover { background: #f3f6ee; }
+  .qty__ctl input {
+    width: 3rem;
+    border: 0;
+    text-align: center;
+    font: 600 1.05rem/1 var(--font-text);
+    color: var(--green-ink);
+    background: none;
+    font-variant-numeric: tabular-nums;
+    -moz-appearance: textfield;
+  }
+  .qty__ctl input::-webkit-inner-spin-button, .qty__ctl input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+  .preview {
+    margin-top: 1.25rem;
+    padding: 0.9rem 1rem;
+    background: #f3f6ee;
+    border-radius: 0.5rem;
+  }
+  .preview__label { font-size: 0.8rem; color: var(--sage-ink); }
+  .preview__text { margin-top: 0.4rem; font-size: 0.9rem; line-height: 1.5; white-space: pre-line; color: var(--green-ink); }
+  .order__note { margin-top: 0.9rem; font-size: 0.85rem; color: var(--sage-ink); }
+
+  /* Móvil: la compra queda fija abajo, siempre a un toque. */
+  .buy--bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
+    margin-top: 0;
+    padding: 0.75rem var(--gutter) max(0.75rem, env(safe-area-inset-bottom));
+    background: var(--paper);
+    color: var(--green-ink);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -8px 24px rgb(20 30 12 / 0.16);
+  }
+  .buy--bar .buy__total output { font-size: 1.5rem; }
+  @media (max-width: 55.99rem) {
+    .buy--inline { display: none; }
+  }
+  @media (min-width: 56rem) {
+    .buy--bar { display: none; }
+    .product__layout {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+      gap: 4rem;
+      align-items: start;
+    }
+    .product__media { position: sticky; top: 5.5rem; }
+    .product__media .bench { margin-inline: 0; }
+    .product__hang { padding-top: 0; margin-top: -1rem; }
+    .product__string { height: 2.5rem; }
+  }
+
+  .related {
+    background: var(--green);
+    color: var(--on-green);
+    padding-block: clamp(3rem, 7vw, 5rem) clamp(4rem, 8vw, 6rem);
+    border-top: 1px solid rgb(246 245 239 / 0.18);
+  }
+</style>
