@@ -11,11 +11,8 @@
  */
 import { config, collection, singleton, fields } from '@keystatic/core';
 
-/**
- * ⚠️ Proyecto de Keystatic Cloud: "equipo/proyecto", tal como aparece en keystatic.cloud.
- * Crea el proyecto allí, conéctalo al repositorio purple-parsec y pega aquí su identificador.
- */
-const CLOUD_PROJECT = 'TU-EQUIPO/purple-parsec';
+/** Proyecto de Keystatic Cloud (equipo/proyecto), conectado al repositorio purple-parsec. */
+const CLOUD_PROJECT = 'somba/rustic-home';
 
 const foto = (label: string, description?: string, required = true) =>
   fields.image({
