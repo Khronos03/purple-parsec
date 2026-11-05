@@ -5,6 +5,7 @@ import { getProducts, type CategoryId } from '../data/products';
 
 const products = await getProducts();
 
+/** Mesones del catálogo: agrupación por forma. */
 const shelves: { id: string; title: string; categories: CategoryId[] }[] = [
   { id: 'gota-redondo', title: 'Gota y redondo', categories: ['gota', 'redondo'] },
   { id: 'altos-jardineras', title: 'Altos y jardineras', categories: ['alto', 'jardinera'] },
