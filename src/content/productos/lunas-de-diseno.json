@@ -17,11 +17,13 @@
       "alt": "Luna decorativa iluminada detrás de una copa de vino"
     }
   ],
+  "options": [],
+  "base": {
+    "discriminant": false
+  },
   "description": "Pregunta por nuestro catálogo en lunas.",
   "showNoPlant": false,
-  "onRequest": true,
-  "options": [],
   "hero": {
-    "show": false
+    "discriminant": false
   }
 }

@@ -40,7 +40,11 @@ const productos = defineCollection({
         .array(z.object({ name: z.string().trim().min(1), price: z.number().int().positive() }))
         .default([]),
       base: z.preprocess(
-        (v) => {
+        (raw) => {
+          // Formato del panel: { discriminant: boolean, value: { label, price } }
+          const v = raw && typeof raw === 'object' && 'discriminant' in raw
+            ? ((raw as { discriminant: boolean; value?: unknown }).discriminant ? (raw as { value?: unknown }).value : undefined)
+            : raw;
           const o = v as { label?: unknown; price?: unknown } | null | undefined;
           return o && empty(o.label) !== undefined && empty(o.price) !== undefined ? o : undefined;
         },
@@ -49,13 +53,23 @@ const productos = defineCollection({
       photos: z
         .array(z.object({ src: image(), alt: z.string().trim().min(1) }))
         .min(1, 'Cada producto necesita al menos una foto'),
-      hero: z
+      hero: z.preprocess(
+        (raw) => {
+          // Formato del panel: { discriminant: boolean, value: { photo, hideOnMobile } }
+          if (raw && typeof raw === 'object' && 'discriminant' in raw) {
+            const r = raw as { discriminant: boolean; value?: Record<string, unknown> | null };
+            return { show: r.discriminant, ...(r.discriminant ? r.value ?? {} : {}) };
+          }
+          return raw;
+        },
+        z
         .object({
           show: z.boolean().default(false),
           photo: z.preprocess(empty, image().optional()),
           hideOnMobile: z.boolean().default(false),
         })
         .default({ show: false, hideOnMobile: false }),
+      ),
     }),
 });
 

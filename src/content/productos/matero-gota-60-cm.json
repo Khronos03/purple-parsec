@@ -13,14 +13,6 @@
       "alt": "Matero Gota 60 cm blanco con vetas doradas y un caucho de hojas oscuras"
     }
   ],
-  "dimensions": "60 cm de altura × 45 cm de ancho",
-  "size": {
-    "h": 60,
-    "w": 45
-  },
-  "material": "Concreto",
-  "showNoPlant": true,
-  "onRequest": false,
   "options": [
     {
       "name": "Gris natural",
@@ -43,9 +35,21 @@
       "price": 200000
     }
   ],
+  "base": {
+    "discriminant": false
+  },
+  "dimensions": "60 cm de altura × 45 cm de ancho",
+  "size": {
+    "h": 60,
+    "w": 45
+  },
+  "material": "Concreto",
+  "showNoPlant": true,
   "hero": {
-    "show": true,
-    "photo": "./fotos/matero-gota-60-cm/hero/photo.jpg",
-    "hideOnMobile": false
+    "discriminant": true,
+    "value": {
+      "photo": "./fotos/matero-gota-60-cm/hero/value/photo.jpg",
+      "hideOnMobile": false
+    }
   }
 }

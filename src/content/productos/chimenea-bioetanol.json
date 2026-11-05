@@ -9,14 +9,6 @@
       "alt": "Chimenea de bioetanol negra encendida junto a dos copas"
     }
   ],
-  "description": "Es perfecta para alegrar tus veladas y momentos especiales.",
-  "dimensions": "15 cm de ancho × 15 cm de alto",
-  "size": {
-    "h": 15,
-    "w": 15
-  },
-  "showNoPlant": false,
-  "onRequest": false,
   "options": [
     {
       "name": "Gris",
@@ -31,7 +23,17 @@
       "price": 60000
     }
   ],
+  "base": {
+    "discriminant": false
+  },
+  "description": "Es perfecta para alegrar tus veladas y momentos especiales.",
+  "dimensions": "15 cm de ancho × 15 cm de alto",
+  "size": {
+    "h": 15,
+    "w": 15
+  },
+  "showNoPlant": false,
   "hero": {
-    "show": false
+    "discriminant": false
   }
 }

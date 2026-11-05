@@ -13,14 +13,6 @@
       "alt": "Matero Redondo 30 cm blanco con vetas negras junto a una ventana"
     }
   ],
-  "dimensions": "30 cm de altura × 30 cm de ancho",
-  "size": {
-    "h": 30,
-    "w": 30
-  },
-  "material": "Concreto",
-  "showNoPlant": true,
-  "onRequest": false,
   "options": [
     {
       "name": "Gris natural",
@@ -44,12 +36,24 @@
     }
   ],
   "base": {
-    "label": "Base con rodachines",
-    "price": 70000
+    "discriminant": true,
+    "value": {
+      "label": "Base con rodachines",
+      "price": 70000
+    }
   },
+  "dimensions": "30 cm de altura × 30 cm de ancho",
+  "size": {
+    "h": 30,
+    "w": 30
+  },
+  "material": "Concreto",
+  "showNoPlant": true,
   "hero": {
-    "show": true,
-    "photo": "./fotos/matero-redondo-30-cm/hero/photo.jpg",
-    "hideOnMobile": false
+    "discriminant": true,
+    "value": {
+      "photo": "./fotos/matero-redondo-30-cm/hero/value/photo.jpg",
+      "hideOnMobile": false
+    }
   }
 }

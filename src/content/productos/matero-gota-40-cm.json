@@ -13,14 +13,6 @@
       "alt": "Matero Gota 40 cm con acabado veteado verde y negro en una sala"
     }
   ],
-  "dimensions": "40 cm de altura × 35 cm de ancho",
-  "size": {
-    "h": 40,
-    "w": 35
-  },
-  "material": "Concreto",
-  "showNoPlant": true,
-  "onRequest": false,
   "options": [
     {
       "name": "Gris natural",
@@ -44,12 +36,24 @@
     }
   ],
   "base": {
-    "label": "Base con rodachines",
-    "price": 80000
+    "discriminant": true,
+    "value": {
+      "label": "Base con rodachines",
+      "price": 80000
+    }
   },
+  "dimensions": "40 cm de altura × 35 cm de ancho",
+  "size": {
+    "h": 40,
+    "w": 35
+  },
+  "material": "Concreto",
+  "showNoPlant": true,
   "hero": {
-    "show": true,
-    "photo": "./fotos/matero-gota-40-cm/hero/photo.jpg",
-    "hideOnMobile": true
+    "discriminant": true,
+    "value": {
+      "photo": "./fotos/matero-gota-40-cm/hero/value/photo.jpg",
+      "hideOnMobile": true
+    }
   }
 }

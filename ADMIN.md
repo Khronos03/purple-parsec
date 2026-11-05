@@ -35,12 +35,17 @@ locales directamente, sin Cloud. Después haces commit y push como siempre.
 
 ## Qué puede editar el cliente
 
+El panel está en español (`locale: 'es-ES'`). Algunos textos internos de Keystatic, como
+«Choose file», «Remove» o «Sign into Cloud», siguen en inglés.
+
+
 - **Productos:** crear, editar, ocultar (*Publicado*), ordenar (*Orden*) y borrar.
   - Fotos (la primera es la principal) con su descripción.
   - Medidas en texto, más alto y ancho en números (para el mesón a escala del inicio).
-  - Colores y acabados con precio, y la base opcional.
-  - *Precio a consultar*: si no se carga ningún precio, el producto se trata así automáticamente.
-  - *Mesón del inicio*: si aparece en el mesón a escala, con una foto recortada opcional.
+  - Colores, acabados y precios. Si no se agrega ninguno, el producto aparece como «Precio a consultar».
+  - «Se puede pedir con base»: al marcarlo aparecen el nombre y el precio de la base.
+  - «Mostrar en el mesón a escala del inicio»: al marcarlo aparecen la foto recortada (opcional) y «Ocultar en celular».
+    Al desmarcarlo, el panel borra esa foto recortada.
 - **Contacto y redes:** WhatsApp (10 dígitos), Instagram, TikTok, eslogan y descripción para
   Google.
 
@@ -59,5 +64,6 @@ otra, edita `SWATCHES` o `FINISH_NOTES` en `src/data/products.ts`.
 ## Estructura de archivos que genera el panel
 
 Keystatic guarda cada foto con una ruta fija según su posición:
-`fotos/<producto>/photos/<n>/src.jpg` y `fotos/<producto>/hero/photo.jpg`. Los productos
+`fotos/<producto>/photos/<n>/src.jpg` y `fotos/<producto>/hero/value/photo.jpg`.
+Las casillas «base» y «mesón» se guardan como `{ "discriminant": true|false, "value": {…} }`. Los productos
 existentes ya están en ese formato. No renombres esos archivos a mano.
