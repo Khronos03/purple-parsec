@@ -20,9 +20,8 @@ Vercel, gracias al adaptador `@astrojs/vercel`. Es el mismo esquema que en Somba
 1. **Keystatic Cloud.** En https://keystatic.cloud inicia sesión con GitHub, crea el proyecto
    (en tu equipo actual o en uno nuevo) y conéctalo al repositorio `purple-parsec`. Así se
    instala la GitHub App de Keystatic en ese repositorio.
-2. **Identificador.** En `keystatic.config.ts`, reemplaza `TU-EQUIPO/purple-parsec` en
-   `CLOUD_PROJECT` por el identificador del proyecto, en formato `equipo/proyecto`, tal como
-   aparece en Keystatic Cloud.
+2. **Identificador.** Ya está configurado en `keystatic.config.ts`: `CLOUD_PROJECT =
+   'somba/rustic-home'`. Si cambias de equipo o de proyecto en Keystatic Cloud, actualízalo ahí.
 3. **Publicar.** Haz commit y push. Vercel detecta el adaptador y despliega el sitio estático
    más la función del panel. No necesitas variables de entorno.
 4. **Cliente.** En Keystatic Cloud, invita al cliente al equipo. Entra en
