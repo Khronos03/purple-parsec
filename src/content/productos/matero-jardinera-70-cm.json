@@ -13,14 +13,6 @@
       "alt": "Jardinera de 70 cm con crotos en un balcón"
     }
   ],
-  "dimensions": "70 cm de largo × 25 cm de ancho × 40 cm de alto",
-  "size": {
-    "h": 40,
-    "w": 70
-  },
-  "material": "Concreto",
-  "showNoPlant": true,
-  "onRequest": false,
   "options": [
     {
       "name": "Gris natural",
@@ -40,10 +32,20 @@
     }
   ],
   "base": {
-    "label": "Base",
-    "price": 60000
+    "discriminant": true,
+    "value": {
+      "label": "Base",
+      "price": 60000
+    }
   },
+  "dimensions": "70 cm de largo × 25 cm de ancho × 40 cm de alto",
+  "size": {
+    "h": 40,
+    "w": 70
+  },
+  "material": "Concreto",
+  "showNoPlant": true,
   "hero": {
-    "show": false
+    "discriminant": false
   }
 }

@@ -9,15 +9,6 @@
       "alt": "Matero Gota Small negro con una orquídea"
     }
   ],
-  "description": "Es perfecta para alegrar el exterior de tus espacios con su atractiva apariencia.",
-  "dimensions": "15 cm de altura × 15 cm de ancho",
-  "size": {
-    "h": 15,
-    "w": 15
-  },
-  "material": "Concreto",
-  "showNoPlant": true,
-  "onRequest": false,
   "options": [
     {
       "name": "Gris natural",
@@ -32,9 +23,22 @@
       "price": 20000
     }
   ],
+  "base": {
+    "discriminant": false
+  },
+  "description": "Es perfecta para alegrar el exterior de tus espacios con su atractiva apariencia.",
+  "dimensions": "15 cm de altura × 15 cm de ancho",
+  "size": {
+    "h": 15,
+    "w": 15
+  },
+  "material": "Concreto",
+  "showNoPlant": true,
   "hero": {
-    "show": true,
-    "photo": "./fotos/materos-gota-small/hero/photo.jpg",
-    "hideOnMobile": true
+    "discriminant": true,
+    "value": {
+      "photo": "./fotos/materos-gota-small/hero/value/photo.jpg",
+      "hideOnMobile": true
+    }
   }
 }

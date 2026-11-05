@@ -13,14 +13,6 @@
       "alt": "Jardineras de 100 cm instaladas en la fachada de un local comercial"
     }
   ],
-  "dimensions": "100 cm de largo × 20 cm de ancho × 40 cm de alto",
-  "size": {
-    "h": 40,
-    "w": 100
-  },
-  "material": "Concreto",
-  "showNoPlant": true,
-  "onRequest": false,
   "options": [
     {
       "name": "Gris natural",
@@ -36,10 +28,20 @@
     }
   ],
   "base": {
-    "label": "Base con rodachines",
-    "price": 60000
+    "discriminant": true,
+    "value": {
+      "label": "Base con rodachines",
+      "price": 60000
+    }
   },
+  "dimensions": "100 cm de largo × 20 cm de ancho × 40 cm de alto",
+  "size": {
+    "h": 40,
+    "w": 100
+  },
+  "material": "Concreto",
+  "showNoPlant": true,
   "hero": {
-    "show": false
+    "discriminant": false
   }
 }
