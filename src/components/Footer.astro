@@ -44,6 +44,10 @@ const year = new Date().getFullYear();
     <div class="wrap footer__band-inner">
       <a class="footer__brand" href="/">Rustic Home</a>
       <a href="/#catalogo">Ver catálogo</a>
+      <a class="footer__admin" href="/keystatic" rel="nofollow">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+        Ingreso administrador
+      </a>
       <span>© {year} · Desarrollado por J. Alexander Suaza M. con 💚</span>
     </div>
   </div>
@@ -105,7 +109,7 @@ const year = new Date().getFullYear();
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem 1.5rem;
-    align-items: baseline;
+    align-items: center;
   }
   .footer__brand {
     font: 700 1rem/1 var(--font-display);
@@ -114,6 +118,15 @@ const year = new Date().getFullYear();
     text-decoration: none;
   }
   .footer__band span { margin-left: auto; color: #3f453a; }
+  .footer__admin {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.75rem;
+    text-decoration: none;
+  }
+  .footer__admin svg { width: 1rem; height: 1rem; }
+  .footer__admin:hover { text-decoration: underline; }
 
   @media (min-width: 52rem) {
     .footer__grid { grid-template-columns: 1.2fr 1fr; gap: 4rem; }

@@ -1,5 +1,8 @@
 // @ts-check
 import { defineConfig, fontProviders } from 'astro/config';
+import react from '@astrojs/react';
+import keystatic from '@keystatic/astro';
+import vercel from '@astrojs/vercel';
 
 const zilla = (weight) => ({
   weight,
@@ -9,6 +12,10 @@ const zilla = (weight) => ({
 
 // https://astro.build/config
 export default defineConfig({
+  // El sitio sigue siendo estático; solo el panel /keystatic y su API corren bajo demanda en Vercel.
+  output: 'static',
+  adapter: vercel(),
+  integrations: [react(), keystatic()],
   // Cuando tengas dominio, defínelo aquí para URLs absolutas (canonical, Open Graph, JSON-LD):
   // site: 'https://www.tudominio.com',
   fonts: [

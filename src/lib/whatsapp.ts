@@ -31,7 +31,7 @@ export const productMessage = (
 ): string => {
   const subject = `${article(product.name)} ${product.name}`;
   if (product.onRequest) {
-    return `Hola, estoy interesado en ${subject}. ¿Me pueden compartir el catálogo de lunas, con precios y disponibilidad?`;
+    return `Hola, estoy interesado en ${subject}. ¿Me pueden compartir precios, opciones y disponibilidad?`;
   }
 
   const { option, withBase = false, qty = 1 } = selection;

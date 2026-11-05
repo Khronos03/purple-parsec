@@ -1,0 +1,51 @@
+{
+  "name": "Matero Gota 27 cm",
+  "published": true,
+  "category": "gota",
+  "order": 30,
+  "photos": [
+    {
+      "src": "./fotos/matero-gota-27-cm/photos/0/src.jpg",
+      "alt": "Matero Gota 27 cm blanco con un cactus en espiral"
+    }
+  ],
+  "dimensions": "27 cm de altura × 20 cm de ancho",
+  "size": {
+    "h": 27,
+    "w": 20
+  },
+  "material": "Concreto",
+  "showNoPlant": true,
+  "onRequest": false,
+  "options": [
+    {
+      "name": "Gris natural",
+      "price": 60000
+    },
+    {
+      "name": "Blanca",
+      "price": 65000
+    },
+    {
+      "name": "Negra",
+      "price": 65000
+    },
+    {
+      "name": "Microcemento",
+      "price": 65000
+    },
+    {
+      "name": "Estuco veneciano",
+      "price": 90000
+    }
+  ],
+  "base": {
+    "label": "Base con rodachines",
+    "price": 60000
+  },
+  "hero": {
+    "show": true,
+    "photo": "./fotos/matero-gota-27-cm/hero/photo.jpg",
+    "hideOnMobile": false
+  }
+}

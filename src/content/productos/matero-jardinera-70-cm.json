@@ -1,0 +1,49 @@
+{
+  "name": "Matero Jardinera 70 cm",
+  "published": true,
+  "category": "jardinera",
+  "order": 70,
+  "photos": [
+    {
+      "src": "./fotos/matero-jardinera-70-cm/photos/0/src.jpg",
+      "alt": "Jardinera de 70 cm sobre base metálica con varias plantas"
+    },
+    {
+      "src": "./fotos/matero-jardinera-70-cm/photos/1/src.jpg",
+      "alt": "Jardinera de 70 cm con crotos en un balcón"
+    }
+  ],
+  "dimensions": "70 cm de largo × 25 cm de ancho × 40 cm de alto",
+  "size": {
+    "h": 40,
+    "w": 70
+  },
+  "material": "Concreto",
+  "showNoPlant": true,
+  "onRequest": false,
+  "options": [
+    {
+      "name": "Gris natural",
+      "price": 100000
+    },
+    {
+      "name": "Blanca",
+      "price": 110000
+    },
+    {
+      "name": "Negra",
+      "price": 110000
+    },
+    {
+      "name": "Microcemento",
+      "price": 110000
+    }
+  ],
+  "base": {
+    "label": "Base",
+    "price": 60000
+  },
+  "hero": {
+    "show": false
+  }
+}

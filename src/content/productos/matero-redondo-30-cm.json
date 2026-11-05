@@ -1,0 +1,55 @@
+{
+  "name": "Matero Redondo 30 cm",
+  "published": true,
+  "category": "redondo",
+  "order": 20,
+  "photos": [
+    {
+      "src": "./fotos/matero-redondo-30-cm/photos/0/src.jpg",
+      "alt": "Matero Redondo 30 cm con textura clara sobre una base con rodachines, en una terraza"
+    },
+    {
+      "src": "./fotos/matero-redondo-30-cm/photos/1/src.jpg",
+      "alt": "Matero Redondo 30 cm blanco con vetas negras junto a una ventana"
+    }
+  ],
+  "dimensions": "30 cm de altura × 30 cm de ancho",
+  "size": {
+    "h": 30,
+    "w": 30
+  },
+  "material": "Concreto",
+  "showNoPlant": true,
+  "onRequest": false,
+  "options": [
+    {
+      "name": "Gris natural",
+      "price": 70000
+    },
+    {
+      "name": "Blanca",
+      "price": 80000
+    },
+    {
+      "name": "Negra",
+      "price": 80000
+    },
+    {
+      "name": "Microcemento",
+      "price": 85000
+    },
+    {
+      "name": "Estuco veneciano",
+      "price": 120000
+    }
+  ],
+  "base": {
+    "label": "Base con rodachines",
+    "price": 70000
+  },
+  "hero": {
+    "show": true,
+    "photo": "./fotos/matero-redondo-30-cm/hero/photo.jpg",
+    "hideOnMobile": false
+  }
+}

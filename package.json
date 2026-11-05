@@ -12,9 +12,15 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/react": "^7.1.2",
+    "@astrojs/vercel": "^11.0.18",
     "@fontsource-variable/hanken-grotesk": "^5.3.0",
     "@fontsource/zilla-slab": "^5.3.0",
-    "astro": "^7.4.5"
+    "@keystatic/astro": "^6.0.0",
+    "@keystatic/core": "^0.6.9",
+    "astro": "^7.4.5",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
     "simple-icons": "^16.36.0"

@@ -1,14 +1,18 @@
 ---
 import Shelf from './Shelf.astro';
 import Sprig from './Sprig.astro';
-import { products, type CategoryId } from '../data/products';
+import { getProducts, type CategoryId } from '../data/products';
+
+const products = await getProducts();
 
 /** Mesones del catálogo: agrupación por forma. */
 const shelves: { id: string; title: string; categories: CategoryId[] }[] = [
   { id: 'gota-redondo', title: 'Gota y redondo', categories: ['gota', 'redondo'] },
   { id: 'altos-jardineras', title: 'Altos y jardineras', categories: ['alto', 'jardinera'] },
   { id: 'decoracion', title: 'Decoración', categories: ['decoracion'] },
-].map((s) => ({ ...s, items: products.filter((p) => s.categories.includes(p.category)) }));
+]
+  .map((s) => ({ ...s, items: products.filter((p) => s.categories.includes(p.category)) }))
+  .filter((s) => s.items.length > 0);
 ---
 
 <section class="catalog on-green" id="catalogo" aria-labelledby="catalogo-title">

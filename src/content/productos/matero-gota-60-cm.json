@@ -1,0 +1,51 @@
+{
+  "name": "Matero Gota 60 cm",
+  "published": true,
+  "category": "gota",
+  "order": 40,
+  "photos": [
+    {
+      "src": "./fotos/matero-gota-60-cm/photos/0/src.jpg",
+      "alt": "Matero Gota 60 cm gris natural con una planta frente a una pared de madera"
+    },
+    {
+      "src": "./fotos/matero-gota-60-cm/photos/1/src.jpg",
+      "alt": "Matero Gota 60 cm blanco con vetas doradas y un caucho de hojas oscuras"
+    }
+  ],
+  "dimensions": "60 cm de altura × 45 cm de ancho",
+  "size": {
+    "h": 60,
+    "w": 45
+  },
+  "material": "Concreto",
+  "showNoPlant": true,
+  "onRequest": false,
+  "options": [
+    {
+      "name": "Gris natural",
+      "price": 140000
+    },
+    {
+      "name": "Blanca",
+      "price": 150000
+    },
+    {
+      "name": "Negra",
+      "price": 150000
+    },
+    {
+      "name": "Microcemento",
+      "price": 160000
+    },
+    {
+      "name": "Estuco veneciano",
+      "price": 200000
+    }
+  ],
+  "hero": {
+    "show": true,
+    "photo": "./fotos/matero-gota-60-cm/hero/photo.jpg",
+    "hideOnMobile": false
+  }
+}

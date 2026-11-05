@@ -1,0 +1,43 @@
+{
+  "name": "Matero Cónico 70 cm",
+  "published": true,
+  "category": "alto",
+  "order": 50,
+  "photos": [
+    {
+      "src": "./fotos/matero-conico-70-cm/photos/0/src.jpg",
+      "alt": "Dos materos Cónicos 70 cm grises con plantas en un pasillo"
+    },
+    {
+      "src": "./fotos/matero-conico-70-cm/photos/1/src.jpg",
+      "alt": "Matero Cónico 70 cm negro veteado con una planta de tronco"
+    }
+  ],
+  "dimensions": "70 cm de altura × 30 cm de ancho",
+  "size": {
+    "h": 70,
+    "w": 30
+  },
+  "material": "Concreto",
+  "showNoPlant": true,
+  "onRequest": false,
+  "options": [
+    {
+      "name": "Gris natural",
+      "price": 100000
+    },
+    {
+      "name": "Blanca",
+      "price": 100000
+    },
+    {
+      "name": "Negra",
+      "price": 100000
+    }
+  ],
+  "hero": {
+    "show": true,
+    "photo": "./fotos/matero-conico-70-cm/hero/photo.jpg",
+    "hideOnMobile": false
+  }
+}

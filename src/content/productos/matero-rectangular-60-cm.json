@@ -1,0 +1,43 @@
+{
+  "name": "Matero Rectangular 60 cm",
+  "published": true,
+  "category": "alto",
+  "order": 80,
+  "photos": [
+    {
+      "src": "./fotos/matero-rectangular-60-cm/photos/0/src.jpg",
+      "alt": "Matero Rectangular 60 cm gris sobre base metálica con una planta"
+    }
+  ],
+  "dimensions": "60 cm de altura × 30 cm de ancho",
+  "size": {
+    "h": 60,
+    "w": 30
+  },
+  "material": "Concreto",
+  "showNoPlant": true,
+  "onRequest": false,
+  "options": [
+    {
+      "name": "Gris natural",
+      "price": 100000
+    },
+    {
+      "name": "Blanca",
+      "price": 100000
+    },
+    {
+      "name": "Negra",
+      "price": 100000
+    }
+  ],
+  "base": {
+    "label": "Base",
+    "price": 60000
+  },
+  "hero": {
+    "show": true,
+    "photo": "./fotos/matero-rectangular-60-cm/hero/photo.jpg",
+    "hideOnMobile": true
+  }
+}

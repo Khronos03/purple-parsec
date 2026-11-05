@@ -3,37 +3,25 @@ import Icon from './Icon.astro';
 import Sprig from './Sprig.astro';
 import ShelfItem from './ShelfItem.astro';
 import { site } from '../data/site';
-import { getProduct } from '../data/products';
+import { getProducts } from '../data/products';
 import { waLink, GENERAL_MESSAGE } from '../lib/whatsapp';
 
-// El mesón del hero: de lo más bajo a lo más alto, con la regla junto a la pieza más alta.
-// En móvil se muestran 4; en escritorio el texto ocupa la pared sobre las piezas bajas.
-// Fotos recortadas al matero, para que lo que se ve a escala sea la pieza y no la escena.
-import heroSmall from '../assets/catalogo/hero/gota-small-a.jpg';
-import hero27 from '../assets/catalogo/hero/gota-27-a.jpg';
-import heroRedondo from '../assets/catalogo/hero/redondo-30-a.jpg';
-import hero40 from '../assets/catalogo/hero/gota-40-b.jpg';
-import heroRect from '../assets/catalogo/hero/rectangular-60-a.jpg';
-import hero60 from '../assets/catalogo/hero/gota-60-a.jpg';
-import heroConico from '../assets/catalogo/hero/conico-70-b.jpg';
-
-const lineup = [
-  ['materos-gota-small', true, heroSmall],
-  ['matero-gota-27-cm', false, hero27],
-  ['matero-redondo-30-cm', false, heroRedondo],
-  ['matero-gota-40-cm', true, hero40],
-  ['matero-rectangular-60-cm', true, heroRect],
-  ['matero-gota-60-cm', false, hero60],
-  ['matero-conico-70-cm', false, heroConico],
-] as const;
-const items = lineup.map(([slug, hideSm, src]) => {
-  const product = getProduct(slug)!;
-  return { product, hideSm, photo: { src, alt: product.photos[0].alt } };
-});
-const ticks = [0, 10, 20, 30, 40, 50, 60, 70];
+// El mesón del hero: los productos marcados "Mostrar en el mesón del inicio" en el panel,
+// de lo más bajo a lo más alto, con la regla junto a la pieza más alta.
+// Usan su foto recortada al matero si la tienen, para que lo que se ve a escala sea la pieza.
+const items = (await getProducts())
+  .filter((p) => p.hero.show && p.size)
+  .sort((a, b) => a.size!.h - b.size!.h)
+  .map((product) => ({
+    product,
+    hideSm: product.hero.hideOnMobile,
+    photo: { src: product.hero.photo ?? product.photos[0].src, alt: product.photos[0].alt },
+  }));
+const tall = Math.max(10, ...items.map((i) => i.product.size!.h));
+const ticks = Array.from({ length: Math.floor(tall / 10) + 1 }, (_, i) => i * 10);
 ---
 
-<section class="hero on-green" aria-labelledby="hero-title">
+<section class="hero on-green" aria-labelledby="hero-title" style={`--tall:${tall}`}>
   <Sprig class="hero__sprig" />
   <div class="wrap hero__copy">
     <h1 id="hero-title">Rustic Home</h1>
@@ -47,24 +35,25 @@ const ticks = [0, 10, 20, 30, 40, 50, 60, 70];
     </div>
   </div>
 
+  {items.length > 0 && (
   <div class="hero__bench">
     <div class="wrap hero__bench-inner">
       <ul class="hero__row" role="list" aria-label="Materos a escala">
         {items.map(({ product, hideSm, photo }) => <ShelfItem product={product} variant="hero" eager hideSm={hideSm} photo={photo} />)}
       </ul>
       <div class="ruler" aria-hidden="true">
-        {ticks.map((t) => <span style={`--t:${t}`}>{(t % 20 === 0 || t === 70) && t > 0 ? t : ''}</span>)}
+        {ticks.map((t) => <span style={`--t:${t}`}>{(t % 20 === 0 || t === ticks.at(-1)) && t > 0 ? t : ''}</span>)}
         <em>cm</em>
       </div>
     </div>
     <div class="bench hero__plank" aria-hidden="true"></div>
   </div>
+  )}
 </section>
 
 <style>
   .hero {
     --cm: 2.3px;
-    --tall: 70;
     position: relative;
     overflow: hidden;
     background: var(--green);

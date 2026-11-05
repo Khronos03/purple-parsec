@@ -1,0 +1,172 @@
+# Panel de administración del catálogo (Sveltia CMS).
+# Guía de uso y configuración: ADMIN.md en la raíz del proyecto.
+
+backend:
+  name: github
+  # ⚠️ Cambia TU-USUARIO por el usuario u organización de GitHub dueña del repositorio.
+  repo: TU-USUARIO/purple-parsec
+  branch: main
+  # Inicio de sesión con el botón "Sign In with GitHub" en Vercel: despliega sveltia-cms-auth
+  # en Cloudflare Workers (ver ADMIN.md) y descomenta esta línea con su URL.
+  # base_url: https://sveltia-cms-auth.TU-CUENTA.workers.dev
+  commit_messages:
+    create: 'Catálogo: crear «{{slug}}»'
+    update: 'Catálogo: actualizar «{{slug}}»'
+    delete: 'Catálogo: eliminar «{{slug}}»'
+    uploadMedia: 'Catálogo: subir foto «{{path}}»'
+    deleteMedia: 'Catálogo: borrar foto «{{path}}»'
+
+# Cuando tengas el dominio final, agrégalo para el enlace "Ver sitio" del panel:
+# site_url: https://www.tudominio.com
+logo:
+  src: /favicon.svg
+
+# Carpeta global de fotos (los productos usan su propia carpeta, definida en la colección).
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  - name: productos
+    label: Productos
+    label_singular: Producto
+    description: Cada producto del catálogo. Los cambios se publican solos en 1 a 2 minutos.
+    folder: src/content/productos
+    extension: json
+    format: json
+    create: true
+    delete: true
+    identifier_field: name
+    slug: '{{name}}'
+    media_folder: fotos
+    public_folder: ./fotos
+    summary: '{{name}}'
+    sortable_fields: [order, name]
+    fields:
+      - name: name
+        label: Nombre
+        widget: string
+        hint: 'Ej.: Matero Gota 40 cm. También define la dirección de la página del producto.'
+      - name: published
+        label: Publicado
+        widget: boolean
+        default: true
+        hint: Desactívalo para ocultar el producto sin borrarlo.
+      - name: category
+        label: Mesón (forma)
+        widget: select
+        options:
+          - { label: Gota, value: gota }
+          - { label: Redondo, value: redondo }
+          - { label: Cónico y rectangular, value: alto }
+          - { label: Jardineras, value: jardinera }
+          - { label: Decoración, value: decoracion }
+      - name: order
+        label: Orden
+        widget: number
+        value_type: int
+        default: 100
+        hint: Número menor aparece antes dentro del catálogo.
+      - name: photos
+        label: Fotos
+        label_singular: Foto
+        widget: list
+        min: 1
+        hint: La primera foto es la principal.
+        fields:
+          - { name: src, label: Foto, widget: image }
+          - name: alt
+            label: Descripción de la foto
+            widget: string
+            hint: Qué se ve en la foto (la leen Google y los lectores de pantalla).
+      - name: description
+        label: Descripción corta
+        widget: text
+        required: false
+      - name: dimensions
+        label: Medidas (texto)
+        widget: string
+        required: false
+        hint: 'Como en el catálogo: 40 cm de altura × 35 cm de ancho'
+      - name: size
+        label: Medidas en números
+        widget: object
+        required: false
+        hint: Alto y ancho (o largo) en cm. Se usan para dibujar el mesón a escala del inicio.
+        fields:
+          - { name: h, label: Alto (cm), widget: number, value_type: float, required: false }
+          - { name: w, label: Ancho o largo (cm), widget: number, value_type: float, required: false }
+      - name: material
+        label: Material
+        widget: string
+        required: false
+        default: Concreto
+      - name: showNoPlant
+        label: Mostrar «No incluye la mata»
+        widget: boolean
+        default: true
+      - name: onRequest
+        label: Precio a consultar
+        widget: boolean
+        default: false
+        hint: Actívalo si el producto no tiene precios publicados (como las Lunas).
+      - name: options
+        label: Colores y acabados
+        label_singular: Color o acabado
+        widget: list
+        required: false
+        summary: '{{fields.name}} — ${{fields.price}}'
+        hint: 'Nombres con muestra de color: Gris natural, Gris, Blanca, Blanco, Negra, Negro. Microcemento y Estuco veneciano muestran una nota explicativa.'
+        fields:
+          - { name: name, label: Nombre, widget: string }
+          - { name: price, label: Precio (COP), widget: number, value_type: int, hint: 'Sin puntos: 100000' }
+      - name: base
+        label: Base
+        widget: object
+        required: false
+        hint: Déjalo vacío si el producto no ofrece base.
+        fields:
+          - { name: label, label: Nombre, widget: string, required: false, default: Base con rodachines }
+          - { name: price, label: Precio (COP), widget: number, value_type: int, required: false }
+      - name: hero
+        label: Mesón del inicio (a escala)
+        widget: object
+        collapsed: true
+        fields:
+          - name: show
+            label: Mostrar en el mesón del inicio
+            widget: boolean
+            default: false
+            hint: Requiere las medidas en números.
+          - name: photo
+            label: Foto recortada al matero
+            widget: image
+            required: false
+            hint: Opcional. Un recorte ajustado al matero (de la base al borde) se ve mejor a escala.
+          - { name: hideOnMobile, label: Ocultar en celular, widget: boolean, default: false }
+
+  - name: sitio
+    label: Datos de contacto
+    files:
+      - name: contacto
+        label: Contacto y redes
+        file: src/content/sitio/contacto.json
+        format: json
+        fields:
+          - name: whatsapp
+            label: WhatsApp
+            widget: string
+            pattern: ['^\d{10}$', 'Escribe los 10 dígitos del celular, sin espacios ni +57']
+            hint: 'Ej.: 3117402752'
+          - name: instagram
+            label: Usuario de Instagram
+            widget: string
+            hint: Sin @
+          - name: tiktok
+            label: Usuario de TikTok
+            widget: string
+            hint: Sin @
+          - { name: slogan, label: Eslogan, widget: string }
+          - name: description
+            label: Descripción para Google y redes
+            widget: text
+            hint: Aparece en los resultados de búsqueda y al compartir el enlace.

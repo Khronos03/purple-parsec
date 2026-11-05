@@ -4,17 +4,19 @@ import Layout from '../../layouts/Layout.astro';
 import Shelf from '../../components/Shelf.astro';
 import Sprig from '../../components/Sprig.astro';
 import Icon from '../../components/Icon.astro';
-import { products, formatCOP, SWATCHES, FINISH_NOTES, type Product } from '../../data/products';
+import { getProducts, formatCOP, SWATCHES, FINISH_NOTES, type Product } from '../../data/products';
 import { waLink, productMessage } from '../../lib/whatsapp';
 
-export function getStaticPaths() {
-  return products.map((product) => ({ params: { slug: product.slug }, props: { product } }));
+export async function getStaticPaths() {
+  const products = await getProducts();
+  return products.map((product) => ({ params: { slug: product.slug }, props: { product, products } }));
 }
 
 interface Props {
   product: Product;
+  products: Product[];
 }
-const { product } = Astro.props;
+const { product, products } = Astro.props;
 const [main] = product.photos;
 const first = product.options[0];
 const size = product.size;
@@ -176,7 +178,7 @@ const jsonLd =
               <div class="buy buy--inline buy--request">
                 <p class="buy__total"><span>Precio</span><output>A consultar</output></p>
                 <a class="btn btn--solid buy__cta" href={waLink(initialMessage)} target="_blank" rel="noopener" data-wa>
-                  <Icon name="whatsapp" /> Pedir catálogo de lunas
+                  <Icon name="whatsapp" /> Consultar por WhatsApp
                 </a>
               </div>
             )}

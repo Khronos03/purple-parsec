@@ -1,0 +1,45 @@
+{
+  "name": "Matero Jardinera 100 cm",
+  "published": true,
+  "category": "jardinera",
+  "order": 60,
+  "photos": [
+    {
+      "src": "./fotos/matero-jardinera-100-cm/photos/0/src.jpg",
+      "alt": "Fila de jardineras de 100 cm blancas con plantas altas"
+    },
+    {
+      "src": "./fotos/matero-jardinera-100-cm/photos/1/src.jpg",
+      "alt": "Jardineras de 100 cm instaladas en la fachada de un local comercial"
+    }
+  ],
+  "dimensions": "100 cm de largo × 20 cm de ancho × 40 cm de alto",
+  "size": {
+    "h": 40,
+    "w": 100
+  },
+  "material": "Concreto",
+  "showNoPlant": true,
+  "onRequest": false,
+  "options": [
+    {
+      "name": "Gris natural",
+      "price": 150000
+    },
+    {
+      "name": "Blanca",
+      "price": 160000
+    },
+    {
+      "name": "Negra",
+      "price": 160000
+    }
+  ],
+  "base": {
+    "label": "Base con rodachines",
+    "price": 60000
+  },
+  "hero": {
+    "show": false
+  }
+}

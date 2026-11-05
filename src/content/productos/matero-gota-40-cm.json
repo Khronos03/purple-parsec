@@ -1,0 +1,55 @@
+{
+  "name": "Matero Gota 40 cm",
+  "published": true,
+  "category": "gota",
+  "order": 10,
+  "photos": [
+    {
+      "src": "./fotos/matero-gota-40-cm/photos/0/src.jpg",
+      "alt": "Matero Gota 40 cm blanco con una planta de hojas largas, sobre un banco de madera"
+    },
+    {
+      "src": "./fotos/matero-gota-40-cm/photos/1/src.jpg",
+      "alt": "Matero Gota 40 cm con acabado veteado verde y negro en una sala"
+    }
+  ],
+  "dimensions": "40 cm de altura × 35 cm de ancho",
+  "size": {
+    "h": 40,
+    "w": 35
+  },
+  "material": "Concreto",
+  "showNoPlant": true,
+  "onRequest": false,
+  "options": [
+    {
+      "name": "Gris natural",
+      "price": 100000
+    },
+    {
+      "name": "Blanca",
+      "price": 110000
+    },
+    {
+      "name": "Negra",
+      "price": 110000
+    },
+    {
+      "name": "Microcemento",
+      "price": 115000
+    },
+    {
+      "name": "Estuco veneciano",
+      "price": 160000
+    }
+  ],
+  "base": {
+    "label": "Base con rodachines",
+    "price": 80000
+  },
+  "hero": {
+    "show": true,
+    "photo": "./fotos/matero-gota-40-cm/hero/photo.jpg",
+    "hideOnMobile": true
+  }
+}

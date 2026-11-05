@@ -1,0 +1,27 @@
+{
+  "name": "Lunas de Diseño",
+  "published": true,
+  "category": "decoracion",
+  "order": 110,
+  "photos": [
+    {
+      "src": "./fotos/lunas-de-diseno/photos/0/src.jpg",
+      "alt": "Luna decorativa iluminada en una pared oscura"
+    },
+    {
+      "src": "./fotos/lunas-de-diseno/photos/1/src.jpg",
+      "alt": "Luna decorativa grande con luz perimetral en una sala"
+    },
+    {
+      "src": "./fotos/lunas-de-diseno/photos/2/src.jpg",
+      "alt": "Luna decorativa iluminada detrás de una copa de vino"
+    }
+  ],
+  "description": "Pregunta por nuestro catálogo en lunas.",
+  "showNoPlant": false,
+  "onRequest": true,
+  "options": [],
+  "hero": {
+    "show": false
+  }
+}

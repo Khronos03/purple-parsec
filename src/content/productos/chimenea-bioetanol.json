@@ -1,0 +1,37 @@
+{
+  "name": "Chimenea Bioetanol",
+  "published": true,
+  "category": "decoracion",
+  "order": 100,
+  "photos": [
+    {
+      "src": "./fotos/chimenea-bioetanol/photos/0/src.jpg",
+      "alt": "Chimenea de bioetanol negra encendida junto a dos copas"
+    }
+  ],
+  "description": "Es perfecta para alegrar tus veladas y momentos especiales.",
+  "dimensions": "15 cm de ancho × 15 cm de alto",
+  "size": {
+    "h": 15,
+    "w": 15
+  },
+  "showNoPlant": false,
+  "onRequest": false,
+  "options": [
+    {
+      "name": "Gris",
+      "price": 60000
+    },
+    {
+      "name": "Negro",
+      "price": 60000
+    },
+    {
+      "name": "Blanco",
+      "price": 60000
+    }
+  ],
+  "hero": {
+    "show": false
+  }
+}
