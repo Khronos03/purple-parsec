@@ -13,7 +13,7 @@ import { createElement as h } from 'react';
 import { config, collection, singleton, fields } from '@keystatic/core';
 
 /** Proyecto de Keystatic Cloud (equipo/proyecto), conectado al repositorio purple-parsec. */
-const CLOUD_PROJECT = 'somba/rustic-home';
+const CLOUD_PROJECT = 'rustic-home/purple-parsec';
 
 const foto = (label: string, description?: string, required = true) =>
   fields.image({
